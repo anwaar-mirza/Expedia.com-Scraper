@@ -1,5 +1,6 @@
 from playwright.sync_api import sync_playwright
 from geopy.geocoders import ArcGIS
+from openpyxl import load_workbook
 from Essential import GenericMethods
 import pandas as pd
 import time
@@ -231,9 +232,9 @@ class ExpediaGroup(GenericMethods):
         main_df = pd.DataFrame([main])
         policies_df = pd.DataFrame([policies])
         extra_df = pd.DataFrame([extra])
-        faqs_df = pd.DataFrame(faqs)
-        beds_df = pd.DataFrame(beds)
-        reviews_df = pd.DataFrame(reviews)
+        faqs_df = pd.DataFrame(faqs if faqs else [{}])   # prevent empty error
+        beds_df = pd.DataFrame(beds if beds else [{}])
+        reviews_df = pd.DataFrame(reviews if reviews else [{}])
 
         sheet_map = {
             "users_portfolio_groups": main_df,
@@ -245,19 +246,25 @@ class ExpediaGroup(GenericMethods):
         }
 
         if os.path.exists(file_path):
+            # Load existing workbook
+            book = load_workbook(file_path)
             with pd.ExcelWriter(file_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
+                writer.book = book
+                writer.sheets = {ws.title: ws for ws in book.worksheets}
+
                 for sheet, df in sheet_map.items():
                     if sheet in writer.sheets:
+                        # Append without writing header again
                         startrow = writer.sheets[sheet].max_row
                         df.to_excel(writer, sheet_name=sheet, index=False, header=False, startrow=startrow)
                     else:
-                        # if new sheet is added later → create with headers
-                        df.to_excel(writer, sheet_name=sheet, index=False)
+                        # First time writing: include header
+                        df.to_excel(writer, sheet_name=sheet, index=False, header=True)
         else:
-            # create new file → headers included
+            # New file, always include headers
             with pd.ExcelWriter(file_path, engine="openpyxl") as writer:
                 for sheet, df in sheet_map.items():
-                    df.to_excel(writer, sheet_name=sheet, index=False)
+                    df.to_excel(writer, sheet_name=sheet, index=False, header=True)
 
 urls_list = [
     # "https://www.expedia.com/Harare-Hotels-Sharon-Las-Palmas-Guest-House.h95375990.Hotel-Information?",

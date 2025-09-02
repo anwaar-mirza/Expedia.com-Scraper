@@ -54,9 +54,10 @@ class GenericMethods:
         self.context = self.browser.new_context()
         self.page = self.context.new_page()
 
-    def get_element(self, selector, attribute="text", timeout=500):
+    def get_element(self, selector, attribute="text", timeout=300):
         try:
             element = self.page.locator(selector)
+            element.wait_for(timeout=timeout)
             if attribute == "text":
                 return element.inner_text()
             elif attribute == "value":

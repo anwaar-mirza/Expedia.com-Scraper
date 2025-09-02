@@ -9,7 +9,7 @@ import os
 class ExpediaGroup(GenericMethods):
     def __init__(self):
         GenericMethods.__init__(self)
-        self.arc = ArcGIS(timeout=10)
+        self.arc = ArcGIS()
 
     def land_targeted_page(self, url):
         self.page.goto(url)
@@ -19,7 +19,7 @@ class ExpediaGroup(GenericMethods):
         temp_amenities = {}
         title = self.get_element("//h1", timeout=600)
         address = self.get_element('//div[@data-stid="content-hotel-address"]', timeout=600)
-        if address:
+        if address != "":
             coor = self.arc.geocode(address)
             lat = coor.latitude
             lon = coor.longitude

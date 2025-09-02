@@ -20,8 +20,10 @@ class ExpediaGroup(GenericMethods):
         temp_amenities = {}
         title = self.get_element("//h1", timeout=600)
         try:
-            address = self.page.locator('//div[@data-stid="content-hotel-address"]')
+            address = self.page.locator('(//section[div//h2[contains(text(), "About the neighborhood")]])[2]//div[button]/div')
             address.wait_for(timeout=300)
+            address.scroll_into_view_if_needed(timeout=1000)
+            time.sleep(0.3)
             address = address.inner_text(timeout=300)
         except:
             address = ""

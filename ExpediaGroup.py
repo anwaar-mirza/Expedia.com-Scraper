@@ -72,7 +72,7 @@ class ExpediaGroup(GenericMethods):
             "post_image": ', '.join(images),
             "post_link": url
         }
-        return results | temp_amenities | {"address": address, "lat": lat, "lon": lon}
+        return results | temp_amenities | {"group_location": address, "lat": lat, "lon": lon}
 
     def get_policies(self, id):
         temp_policies = {}
@@ -230,14 +230,14 @@ class ExpediaGroup(GenericMethods):
         faqs = self.get_faqs(id)
         beds = self.get_beds(id)
         reviews = self.get_reviews(id)
-    
+
         main_df = pd.DataFrame([main])
         policies_df = pd.DataFrame([policies])
         extra_df = pd.DataFrame([extra])
         faqs_df = pd.DataFrame(faqs)
         beds_df = pd.DataFrame(beds)
         reviews_df = pd.DataFrame(reviews)
-    
+
         sheet_map = {
             "users_portfolio_groups": main_df,
             "property_reviews": reviews_df,
@@ -246,7 +246,7 @@ class ExpediaGroup(GenericMethods):
             "faqs": faqs_df,
             "more_info": extra_df,
         }
-    
+
         if os.path.exists(file_path):
             # File already exists → append without headers
             with pd.ExcelWriter(file_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
@@ -268,8 +268,8 @@ class ExpediaGroup(GenericMethods):
             with pd.ExcelWriter(file_path, engine="openpyxl") as writer:
                 for sheet, df in sheet_map.items():
                     df.to_excel(writer, sheet_name=sheet, index=False)
-            
-    
+
+
 urls_list = [
     # "https://www.expedia.com/Harare-Hotels-Sharon-Las-Palmas-Guest-House.h95375990.Hotel-Information?",
     # "https://www.expedia.com/Bouvet-Island-Hotels-Vrbo-Property.h48288270.Hotel-Information?",

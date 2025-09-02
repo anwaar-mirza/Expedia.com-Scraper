@@ -15,10 +15,18 @@ class ExpediaGroup(GenericMethods):
 
     def land_targeted_page(self, url):
         self.page.goto(url)
-        time.sleep(2)
+        time.sleep(5)
+    
+    def verify_url(self, url):
+        if url.strip() != self.page.url.strip():
+            checked_url = self.page.url.strip().split('?')[0]
+            self.land_targeted_page(url=checked_url)
+            time.sleep(2)
+
 
     def get_main_info(self, id, url):
         temp_amenities = {}
+        self.verify_url(url=url)
         title = self.get_element("//h1", timeout=600)
         try:
             address = self.page.locator('(//section[div//h2[contains(text(), "About the neighborhood")]])[2]//div[button]/div')
@@ -75,8 +83,9 @@ class ExpediaGroup(GenericMethods):
         }
         return results | temp_amenities | {"group_location": address, "lat": lat, "lon": lon}
 
-    def get_policies(self, id):
+    def get_policies(self, id, url):
         temp_policies = {}
+        self.verify_url(url=url)
         try:
             try:
                 policy_btn = self.page.locator('(//section[div//h2[contains(text(), "Policies")]])[3]//button')
@@ -94,9 +103,10 @@ class ExpediaGroup(GenericMethods):
             return {"id": "", "group_id": id} | temp_policies | {"created_at": ""}
         except:
             return {}
-    
-    def get_important_information(self, id):
+
+    def get_important_information(self, id, url):
         temp_extra = {}
+        self.verify_url(url=url)
         try:
             for val in self.extra_info:
                 required_xpath = f'//div[@data-stid="content-item" and div/div/h3[text()="{val}"]]//div[@class="uitk-layout-grid-item"]/div'
@@ -104,9 +114,10 @@ class ExpediaGroup(GenericMethods):
             return {"id": "", "group_id": id} | temp_extra | {"created_at": ""}
         except:
             return temp_extra
-    
-    def get_faqs(self, id):
+
+    def get_faqs(self, id, url):
         faqs = []
+        self.verify_url(url=url)
         try:
             check = self.page.locator('//h2[text() = "Frequently asked questions"]')
             check.wait_for(timeout=1000)
@@ -132,9 +143,10 @@ class ExpediaGroup(GenericMethods):
             return faqs
         except:
             return faqs
-    
-    def get_beds(self, id):
+
+    def get_beds(self, id, url):
         beds = []
+        self.verify_url(url=url)
         try:
             all_beds = self.page.locator('//div[@data-stid="section-room-list"]//span[text()= "More details"]').all()
             for bed in all_beds:
@@ -178,8 +190,9 @@ class ExpediaGroup(GenericMethods):
             return []
 
 
-    def get_reviews(self, id):
+    def get_reviews(self, id, url):
         reviews = []
+        self.verify_url(url=url)
         try:
             revs = self.page.locator('(//section[div//h2[contains(text(), "Reviews")]])[2]//div[contains(@data-stid, "property-reviews")]').all()
             for r in revs:
@@ -226,11 +239,11 @@ class ExpediaGroup(GenericMethods):
 
     def combine_all_sets(self, id, file_path, url):
         main = self.get_main_info(id, url)
-        policies = self.get_policies(id)
-        extra = self.get_important_information(id)
-        faqs = self.get_faqs(id)
-        beds = self.get_beds(id)
-        reviews = self.get_reviews(id)
+        policies = self.get_policies(id, url)
+        extra = self.get_important_information(id, url)
+        faqs = self.get_faqs(id, url)
+        beds = self.get_beds(id, url)
+        reviews = self.get_reviews(id, url)
 
         main_df = pd.DataFrame([main])
         policies_df = pd.DataFrame([policies])

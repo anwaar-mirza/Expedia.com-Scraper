@@ -18,10 +18,6 @@ class ExpediaGroup(GenericMethods):
     def get_main_info(self, id, url):
         temp_amenities = {}
         title = self.get_element("h1")
-        self.click_on_button("h1")
-        time.sleep(1)
-        self.click_on_button('button[aria-label="See all"]', timeout=1000)
-        time.sleep(1)
         address = self.get_element('//div[@data-stid="content-hotel-address"]', timeout=800)
         if address:
             coor = self.arc.geocode(address)
@@ -30,6 +26,10 @@ class ExpediaGroup(GenericMethods):
         else:
             lat = ''
             lon = ''
+        self.click_on_button("h1")
+        time.sleep(1)
+        self.click_on_button('button[aria-label="See all"]', timeout=1000)
+        time.sleep(1)
         for val in self.amenities:
             required_selector = f'//div[div/h2[text()="{val}"]]//ul/li'
             results = self.get_elements(required_selector)
@@ -37,14 +37,14 @@ class ExpediaGroup(GenericMethods):
         self.click_on_button('//button[@class="uitk-toolbar-button uitk-toolbar-button-icon-only"]')
         time.sleep(0.5)
         try:
-            about_btn = self.page.locator('button[aria-label="See more about this property"]')
+            about_btn = self.page.locator('(//section[div/div//h2[contains(text(), "About this property")]])[2]//button')
             if not about_btn.is_visible():
                 about_btn.scroll_into_view_if_needed(timeout=1000)
             about_btn.click(timeout=1000)
             time.sleep(1)
         except:
             pass
-        about = self.get_element('//div[contains(@id, "about-this")]//div[@class="uitk-expando-peek-main uitk-expando-peek-main-active hide-scrim"]')
+        about = self.get_element('(//section[div/div//h2[contains(text(), "About this property")]])[2]//div[@itemprop="description"]')
         image_btn = self.page.locator('//button[@class="uitk-button uitk-button-medium uitk-button-has-text uitk-button-overlay"]')
         if not image_btn.is_visible():
             image_btn.scroll_into_view_if_needed(timeout=1000)
@@ -70,7 +70,7 @@ class ExpediaGroup(GenericMethods):
         temp_policies = {}
         try:
             try:
-                policy_btn = self.page.locator('//button[text()="See all policies"]')
+                policy_btn = self.page.locator('(//section[div//h2[contains(text(), "Policies")]])[3]//button')
                 policy_btn.wait_for(timeout=1000)
                 if not policy_btn.is_visible():
                     policy_btn.scroll_into_view_if_needed(timeout=1000)
@@ -172,7 +172,7 @@ class ExpediaGroup(GenericMethods):
     def get_reviews(self, id):
         reviews = []
         try:
-            revs = self.page.locator('//div[@data-stid="property-reviews-list-item"]').all()
+            revs = self.page.locator('(//section[div//h2[contains(text(), "Reviews")]])[2]//div[contains(@data-stid, "property-reviews")]').all()
             for r in revs:
                 r.scroll_into_view_if_needed(timeout=500)
                 time.sleep(0.2)
@@ -188,6 +188,12 @@ class ExpediaGroup(GenericMethods):
                     overall_rating = r.locator('xpath=.//span[@itemprop="ratingValue"]').inner_text(timeout=500)
                 except:
                     overall_rating = '' 
+                    
+                try:
+                    review_title = r.locator('xpath=.//h4[@data-stid="review_section_title"]/span').inner_text(timeout=500)
+                except:
+                    review_title = ''
+
                 try:
                     review_body = r.locator('xpath=.//span[@itemprop="description"]').inner_text(timeout=500)
                 except:
@@ -199,7 +205,7 @@ class ExpediaGroup(GenericMethods):
                         "group_id": id,
                         "review_date": review_date,
                         "name": review_by,
-                        "title": "",
+                        "title": review_title,
                         "overall_rating": overall_rating,
                         "review": review_body,
                         "created_at": ""

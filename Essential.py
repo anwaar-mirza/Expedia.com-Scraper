@@ -50,7 +50,7 @@ class GenericMethods:
             "Accessibility"
         ]
         self.playwright = sync_playwright().start()
-        self.browser = self.playwright.chromium.launch(headless=False, args=["--incognito", "--ignore-certificate-errors", "--disable-blink-features=AutomationControlled"])
+        self.browser = self.playwright.chromium.launch(headless=False, args=["--disable-blink-features=AutomationControlled"])
         self.context = self.browser.new_context()
         self.page = self.context.new_page()
 

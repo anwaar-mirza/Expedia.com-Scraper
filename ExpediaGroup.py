@@ -277,20 +277,20 @@ def handle_threading(thread_id, group_id, url_file_path, output_file_path):
     if os.path.exists(url_file_path):
         with open(url_file_path, 'r') as f:
             next(f)
-            reader = csv.reader(f)
+            reading_file = csv.reader(f)
             i=0
-            for id, url in enumerate(reader, start=group_id):
+            for id, url in enumerate(reading_file, start=group_id):
                 i+=1
                 print(f"Thread {thread_id}: Processing ID: {id}, Current Link: {i}, URL: {url[0]}")
                 bot.land_targeted_page(url=url)
                 bot.combine_all_sets(id=id, file_path=output_file_path, url=url)
 
 
-th1 = Thread(target=handle_threading, args=(1, 424, r"C:\Users\anwaa\Downloads\1_100.csv", 'ExpediaGroup_1.xlsx'))
+th1 = Thread(target=handle_threading, args=(1, 424, r"C:\Users\anwaa\Downloads\1_100.csv", 'D:/ExpediaGroup_1.xlsx'))
 th1.start()
-th2 = Thread(target=handle_threading, args=(2, 524, r"C:\Users\anwaa\Downloads\100_200_links.csv", 'ExpediaGroup_2.xlsx'))
+th2 = Thread(target=handle_threading, args=(2, 524, r"C:\Users\anwaa\Downloads\100_200_links.csv", 'D:/ExpediaGroup_2.xlsx'))
 th2.start()
-th3 = Thread(target=handle_threading, args=(3, 624,r"C:\Users\anwaa\Downloads\200_300 (1).csv" , 'ExpediaGroup_3.xlsx'))
+th3 = Thread(target=handle_threading, args=(3, 624,r"C:\Users\anwaa\Downloads\200_300 (1).csv" , 'D:/ExpediaGroup_3.xlsx'))
 th3.start()
 
 

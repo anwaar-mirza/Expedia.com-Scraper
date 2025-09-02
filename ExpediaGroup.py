@@ -298,7 +298,7 @@ def handle_threading(thread_id, group_id, url_file_path, output_file_path):
                 bot.combine_all_sets(id=id, file_path=output_file_path, url=url[0].strip())
 
 
-th1 = Thread(target=handle_threading, args=(1, 424, r"C:\Users\anwaa\Downloads\1_100.csv", 'D:/ExpediaGroup_1.xlsx'))
+th1 = Thread(target=handle_threading, args=(1, 424, r"C:\Users\anwaa\Downloads\100_200_links.csv", 'D:/ExpediaGroup_2.xlsx'))
 th1.start()
 
 

@@ -15,13 +15,13 @@ class ExpediaGroup(GenericMethods):
 
     def land_targeted_page(self, url):
         self.page.goto(url)
-        time.sleep(5)
+        time.sleep(2)
     
     def verify_url(self, url):
         if url.strip() != self.page.url.strip():
             checked_url = self.page.url.strip().split('?')[0]
-            self.land_targeted_page(url=checked_url)
-            time.sleep(2)
+            self.land_targeted_page(url=checked_url+"?")
+            time.sleep(5)
 
 
     def get_main_info(self, id, url):

@@ -18,14 +18,14 @@ class ExpediaGroup(GenericMethods):
     def get_main_info(self, id, url):
         temp_amenities = {}
         title = self.get_element("//h1", timeout=600)
-        address = self.get_element('//div[@data-stid="content-hotel-address"]', timeout=600)
-        if address != "":
-            coor = self.arc.geocode(address)
-            lat = coor.latitude
-            lon = coor.longitude
-        else:
-            lat = ''
-            lon = ''
+        # address = self.get_element('//div[@data-stid="content-hotel-address"]', timeout=600)
+        # if address != "":
+        #     coor = self.arc.geocode(address)
+        #     lat = coor.latitude
+        #     lon = coor.longitude
+        # else:
+        #     lat = ''
+        #     lon = ''
         self.click_on_button("h1")
         time.sleep(1)
         self.click_on_button('button[aria-label="See all"]', timeout=1000)
@@ -64,7 +64,8 @@ class ExpediaGroup(GenericMethods):
             "post_image": ', '.join(images),
             "post_link": url
         }
-        return results | temp_amenities | {"address": address, "lat": lat, "lon": lon}
+        return results | temp_amenities 
+    # | {"address": address, "lat": lat, "lon": lon}
 
     def get_policies(self, id):
         temp_policies = {}

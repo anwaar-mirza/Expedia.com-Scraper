@@ -230,14 +230,14 @@ class ExpediaGroup(GenericMethods):
         faqs = self.get_faqs(id)
         beds = self.get_beds(id)
         reviews = self.get_reviews(id)
-
+    
         main_df = pd.DataFrame([main])
         policies_df = pd.DataFrame([policies])
         extra_df = pd.DataFrame([extra])
-        faqs_df = pd.DataFrame(faqs if faqs else [{}])   # prevent empty error
-        beds_df = pd.DataFrame(beds if beds else [{}])
-        reviews_df = pd.DataFrame(reviews if reviews else [{}])
-
+        faqs_df = pd.DataFrame(faqs)
+        beds_df = pd.DataFrame(beds)
+        reviews_df = pd.DataFrame(reviews)
+    
         sheet_map = {
             "users_portfolio_groups": main_df,
             "property_reviews": reviews_df,
@@ -246,28 +246,30 @@ class ExpediaGroup(GenericMethods):
             "faqs": faqs_df,
             "more_info": extra_df,
         }
-
+    
         if os.path.exists(file_path):
-            # Load existing workbook
-            book = load_workbook(file_path)
+            # File already exists → append without headers
             with pd.ExcelWriter(file_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
-                writer.book = book
-                writer.sheets = {ws.title: ws for ws in book.worksheets}
-
                 for sheet, df in sheet_map.items():
                     if sheet in writer.sheets:
-                        # Append without writing header again
                         startrow = writer.sheets[sheet].max_row
-                        df.to_excel(writer, sheet_name=sheet, index=False, header=False, startrow=startrow)
+                        df.to_excel(
+                            writer,
+                            sheet_name=sheet,
+                            index=False,
+                            header=False,
+                            startrow=startrow,
+                        )
                     else:
-                        # First time writing: include header
-                        df.to_excel(writer, sheet_name=sheet, index=False, header=True)
+                        # If a new sheet is added later → include headers
+                        df.to_excel(writer, sheet_name=sheet, index=False)
         else:
-            # New file, always include headers
+            # First time → write with headers
             with pd.ExcelWriter(file_path, engine="openpyxl") as writer:
                 for sheet, df in sheet_map.items():
-                    df.to_excel(writer, sheet_name=sheet, index=False, header=True)
-
+                    df.to_excel(writer, sheet_name=sheet, index=False)
+            
+    
 urls_list = [
     # "https://www.expedia.com/Harare-Hotels-Sharon-Las-Palmas-Guest-House.h95375990.Hotel-Information?",
     # "https://www.expedia.com/Bouvet-Island-Hotels-Vrbo-Property.h48288270.Hotel-Information?",

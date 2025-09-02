@@ -60,7 +60,7 @@ class ExpediaGroup(GenericMethods):
         image_btn.click(timeout=1000, force=True)
         time.sleep(1)
         images = self.page.locator('//figure[@class="uitk-image uitk-image-ratio-16-9 uitk-image-ratio"]/div/img').all()
-        for i in range(0, min(len(images), 300), 3):
+        for i in range(0, min(len(images), 500), 3):
             images[i].scroll_into_view_if_needed(timeout=3000)
         images = self.get_elements('//figure[@class="uitk-image uitk-image-ratio-16-9 uitk-image-ratio"]/div/img', attribute="src")
         self.click_on_button('//button[@class="uitk-toolbar-button uitk-toolbar-button-icon-only"]', timeout=1000)

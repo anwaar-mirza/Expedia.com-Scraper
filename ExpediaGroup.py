@@ -17,8 +17,8 @@ class ExpediaGroup(GenericMethods):
 
     def get_main_info(self, id, url):
         temp_amenities = {}
-        title = self.get_element("h1")
-        address = self.get_element('//div[@data-stid="content-hotel-address"]', timeout=800)
+        title = self.get_element("//h1")
+        address = self.get_element('//div[@data-stid="content-hotel-address"]')
         if address:
             coor = self.arc.geocode(address)
             lat = coor.latitude

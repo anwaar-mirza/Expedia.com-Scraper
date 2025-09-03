@@ -23,7 +23,7 @@ class ExpediaGroup(GenericMethods):
             time.sleep(3)
 
 
-    def get_main_info(self, id, url):
+    def get_main_info(self, id, url, file_path):
         temp_amenities = {}
         self.verify_url(url=url)
         title = self.get_element("//h1", timeout=600)
@@ -47,7 +47,7 @@ class ExpediaGroup(GenericMethods):
         self.click_on_button('button[aria-label="See all"]', timeout=1000)
         time.sleep(1)
         for val in self.amenities:
-            required_selector = f'//div[div/h2[text()="{val}"]]//ul/li'
+            required_selector = f'//div[div/h2[text()="{val.replace(" ", "_").replace("-", "_").strip().lower()}"]]//ul/li'
             results = self.get_elements(required_selector)
             temp_amenities[val.replace(" ", "_").lower()] = ', '.join(results)
         self.click_on_button('//button[@class="uitk-toolbar-button uitk-toolbar-button-icon-only"]')
@@ -243,6 +243,13 @@ class ExpediaGroup(GenericMethods):
         faqs = self.get_faqs(id, url)
         beds = self.get_beds(id, url)
         reviews = self.get_reviews(id, url)
+        user_file = {
+            "company": main['group_name'],
+            "address": main['group_location'],
+            "lat": main['lat'],
+            "lon": main['lon'],
+            "about_me": main['group_desc']
+        }
 
         main_df = pd.DataFrame([main])
         policies_df = pd.DataFrame([policies])
@@ -250,6 +257,7 @@ class ExpediaGroup(GenericMethods):
         faqs_df = pd.DataFrame(faqs)
         beds_df = pd.DataFrame(beds)
         reviews_df = pd.DataFrame(reviews)
+        user_file_df = pd.DataFrame([user_file])
 
         sheet_map = {
             "users_portfolio_groups": main_df,
@@ -258,30 +266,13 @@ class ExpediaGroup(GenericMethods):
             "house_rules": policies_df,
             "faqs": faqs_df,
             "more_info": extra_df,
+            "users_data": user_file_df
         }
 
-        if os.path.exists(file_path):
-            # File already exists → append without headers
-            with pd.ExcelWriter(file_path, engine="openpyxl", mode="a", if_sheet_exists="overlay") as writer:
-                for sheet, df in sheet_map.items():
-                    if sheet in writer.sheets:
-                        startrow = writer.sheets[sheet].max_row
-                        df.to_excel(
-                            writer,
-                            sheet_name=sheet,
-                            index=False,
-                            header=False,
-                            startrow=startrow,
-                        )
-                    else:
-                        # If a new sheet is added later → include headers
-                        df.to_excel(writer, sheet_name=sheet, index=False)
-        else:
-            # First time → write with headers
-            with pd.ExcelWriter(file_path, engine="openpyxl") as writer:
-                for sheet, df in sheet_map.items():
-                    df.to_excel(writer, sheet_name=sheet, index=False)
-
+        for file_name, df in sheet_map.items():
+            file_path = file_path.split('.')
+            file_path_final = file_path[0]+f"-{file_name}"+file_path[-1]
+            df.to_csv(file_path_final, mode='a', header=not os.path.exists(file_path_final), index=False)
 
 
 def handle_threading(thread_id, group_id, url_file_path, output_file_path):
@@ -298,6 +289,36 @@ def handle_threading(thread_id, group_id, url_file_path, output_file_path):
                     bot.land_targeted_page(url=url[0].strip())
                     bot.combine_all_sets(id=id, file_path=output_file_path, url=url[0].strip())
                 except:
+                    file_path = output_file_path.split('.')
+                    final_path = output_file_path[0]+f"-users_portfolio_groups."+output_file_path[-1]
+                    data = {
+                        "group_id": group_id,
+                        "user_id": "",
+                        "group_name": "Broken Link",
+                        "group_desc": "",
+                        "post_image": "",
+                        "post_link": "",
+                        "popular_amenities": "",
+                        "parking_and_transportation": "",
+                        "food_and_drink": "",
+                        "internet": "",
+                        "things_to_do": "",
+                        "family_friendly": "",
+                        "conveniences": "",
+                        "guest_services": "",
+                        "outdoors": "",
+                        "accessibility": "",
+                        "more": "",
+                        "languages_spoken": "",
+                        "activities_nearby": "",
+                        "restaurants_on_site": "",
+                        "top_family-friendly_amenities": "",
+                        "group_location": "",
+                        "lat": "",
+                        "lon": ""
+                    }
+                    p = pd.DataFrame([data])
+                    p.to_csv(final_path, mode='a', header=not os.path.exists(file_path), index=False)
                     i+=1
 
 

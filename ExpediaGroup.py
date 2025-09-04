@@ -322,9 +322,14 @@ def handle_threading(thread_id, group_id, url_file_path, output_file_path):
                     i+=1
 
 
-th1 = Thread(target=handle_threading, args=(1, 424, r"C:\Users\anwaa\Downloads\1_100.csv", 'D:/ExpediaGroup_1.xlsx'))
+th1 = Thread(target=handle_threading, args=(1, 524, r"C:\Users\anwaa\Downloads\100_200_links.csv", 'D:/ExpediaGroup_2.xlsx'))
 th1.start()
+time.sleep(15)
+th2 = Thread(target=handle_threading, args=(1, 624, r"C:\Users\anwaa\Downloads\200_300 (1).csv", 'D:/ExpediaGroup_3.xlsx'))
+th2.start()
+
 
 
 th1.join()
+th2.join()
 

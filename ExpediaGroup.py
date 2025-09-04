@@ -290,7 +290,7 @@ def handle_threading(thread_id, group_id, url_file_path, output_file_path):
                     bot.combine_all_sets(id=id, file_path=output_file_path, url=url[0].strip())
                 except:
                     file_path = output_file_path.split('.')
-                    final_path = output_file_path[0]+f"-users_portfolio_groups."+output_file_path[-1]
+                    final_path = file_path[0]+f"-users_portfolio_groups."+file_path[-1]
                     data = {
                         "group_id": group_id,
                         "user_id": "",

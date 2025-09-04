@@ -271,7 +271,7 @@ class ExpediaGroup(GenericMethods):
 
         for file_name, df in sheet_map.items():
             file_p = file_path.split('.')
-            file_path_final = file_p[0]+f"-{file_name}"+file_p[-1]
+            file_path_final = file_p[0]+f"-{file_name}."+file_p[-1]
             df.to_csv(file_path_final, mode='a', header=not os.path.exists(file_path_final), index=False)
 
 
@@ -322,10 +322,10 @@ def handle_threading(thread_id, group_id, url_file_path, output_file_path):
                     i+=1
 
 
-th1 = Thread(target=handle_threading, args=(1, 524, r"C:\Users\anwaa\Downloads\100_200_links.csv", 'D:/ExpediaGroup_2.xlsx'))
+th1 = Thread(target=handle_threading, args=(1, 524, r"C:\Users\anwaa\Downloads\100_200_links.csv", 'D:/ExpediaGroup_2.csv'))
 th1.start()
 time.sleep(15)
-th2 = Thread(target=handle_threading, args=(1, 624, r"C:\Users\anwaa\Downloads\200_300 (1).csv", 'D:/ExpediaGroup_3.xlsx'))
+th2 = Thread(target=handle_threading, args=(1, 624, r"C:\Users\anwaa\Downloads\200_300 (1).csv", 'D:/ExpediaGroup_3.csv'))
 th2.start()
 
 

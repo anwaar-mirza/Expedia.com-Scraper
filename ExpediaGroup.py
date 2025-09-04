@@ -23,7 +23,7 @@ class ExpediaGroup(GenericMethods):
             time.sleep(3)
 
 
-    def get_main_info(self, id, url, file_path):
+    def get_main_info(self, id, url):
         temp_amenities = {}
         self.verify_url(url=url)
         title = self.get_element("//h1", timeout=600)

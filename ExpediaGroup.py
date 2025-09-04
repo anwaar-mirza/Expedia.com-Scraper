@@ -47,9 +47,9 @@ class ExpediaGroup(GenericMethods):
         self.click_on_button('button[aria-label="See all"]', timeout=1000)
         time.sleep(1)
         for val in self.amenities:
-            required_selector = f'//div[div/h2[text()="{val.replace(" ", "_").replace("-", "_").strip().lower()}"]]//ul/li'
+            required_selector = f'//div[div/h2[text()="{val}"]]//ul/li'
             results = self.get_elements(required_selector)
-            temp_amenities[val.replace(" ", "_").lower()] = ', '.join(results)
+            temp_amenities[val.replace(" ", "_").replace("-", "_").strip().lower()] = ', '.join(results)
         self.click_on_button('//button[@class="uitk-toolbar-button uitk-toolbar-button-icon-only"]')
         time.sleep(0.5)
         try:

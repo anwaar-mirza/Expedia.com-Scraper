@@ -270,8 +270,8 @@ class ExpediaGroup(GenericMethods):
         }
 
         for file_name, df in sheet_map.items():
-            file_path = file_path.split('.')
-            file_path_final = file_path[0]+f"-{file_name}"+file_path[-1]
+            file_p = file_path.split('.')
+            file_path_final = file_p[0]+f"-{file_name}"+file_p[-1]
             df.to_csv(file_path_final, mode='a', header=not os.path.exists(file_path_final), index=False)
 
 

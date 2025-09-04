@@ -75,7 +75,7 @@ class GenericMethods:
         try:
             elements = self.page.locator(selector).all()
             if attribute == "text":
-                return [element.inner_text(timeout=500) for element in elements]
+                return [element.inner_text(timeout=700) for element in elements]
             elif attribute == "value":
                 return [element.get_attribute("value", timeout=500) for element in elements]
             elif attribute == "href":
